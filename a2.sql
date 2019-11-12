@@ -122,11 +122,11 @@ FROM champion
 GROUP BY pid, year
 HAVING Count(tid)>=2);
 
-INSERT INTO query7 (pname, year)
+INSERT INTO query7 (
 SELECT player.pname as pname, AtleastTwice.year as year
 FROM player, AtleastTwice
 WHERE player.pid = AtleastTwice.pid
-ORDER BY pname DESC, year DESC;
+ORDER BY pname DESC, year DESC);
 
 DROP VIEW AtleastTwice;
 
@@ -151,7 +151,8 @@ CREATE VIEW bothPlayersReverse AS
 FROM player1, player2, event
 WHERE player1.cid = player2.cid and event.winid = player1.p1id and event.lossid = player2.p2id);
 
-INSERT INTO query8 (p1name, p2name, cname) (SELECT DISTINCT p1name, p2name, cname
+INSERT INTO query8 (
+SELECT DISTINCT p1name, p2name, cname
 FROM ((SELECT * FROM bothPlayers) UNION ALL (SELECT * FROM bothPlayersReverse)) players, country 
 WHERE players.cid = country.cid
 ORDER BY cname ASC, p1name DESC);
