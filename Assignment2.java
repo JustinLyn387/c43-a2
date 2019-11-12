@@ -109,10 +109,10 @@ public class Assignment2 {
             // Create the query
             ps = connection.prepareStatement("UPDATE record SET wins = ?, losses = ? WHERE pid = ? and year = ?");
             // Insert all the values that we need
-            ps.setInt(1, pid);
-            ps.setInt(2, year);
-            ps.setInt(3, wins);
-            ps.setInt(4, losses);
+            ps.setInt(1, wins)
+            ps.setInt(2, losses);
+            ps.setInt(3, pid);
+            ps.setInt(4, year);
             // Execute the update
             ps.executeUpdate();
             return true;
@@ -121,13 +121,21 @@ public class Assignment2 {
         }
     }
 
-    public boolean deleteMatcBetween(int p1id, int p2id){
+    public boolean deleteMatchBetween(int p1id, int p2id){
         try{
             // Create the query
             ps = connection.prepareStatement("DELETE FROM event WHERE winid = ? and lossid = ?");
             // Insert values
             ps.setInt(1, p1id);
             ps.setInt(2, p2id);
+            // Execute the update
+            ps.executeUpdate();
+
+            // Create the query
+            ps = connection.prepareStatement("DELETE FROM event WHERE winid = ? and lossid = ?");
+            // Insert values
+            ps.setInt(1, p2id);
+            ps.setInt(2, p1id);
             // Execute the update
             ps.executeUpdate();
             return true;
