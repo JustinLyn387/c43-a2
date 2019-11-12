@@ -122,7 +122,7 @@ public class Assignment2 {
         }
     }
 
-    public boolean deleteMatcBetween(int p1id, int p2id){
+    public boolean deleteMatchBetween(int p1id, int p2id){
         try{
             // Create the query
             ps = connection.prepareStatement("DELETE FROM event WHERE winid = ? and lossid = ?");
