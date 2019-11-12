@@ -168,8 +168,8 @@ public class Assignment2 {
         int circle = 0;
         try{
             ps = connection.prepareStatement("SELECT COUNT(*) FROM " +
-                    "(SELECT DISTINCT e1.winid, e1.lossid, e2.winid, e2.lossid " +
-                    "FROM event e1, event e2 WHERE e1.lossid = e2.winid and e2.lossid = e1.winid)" +
+                    "(SELECT DISTINCT e1.winid, e2.winid, e3.winid" +
+                    "FROM event e1, event e2, event e3 WHERE e1.lossid = e2.winid and e2.lossid = e3.winid and e3.lossid == e1.winid)" +
                     " AS results");
             // Execute the query
             rs = ps.executeQuery();
