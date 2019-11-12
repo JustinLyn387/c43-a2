@@ -174,7 +174,7 @@ public class Assignment2 {
             // Execute the query
             rs = ps.executeQuery();
             while (rs.next()) {
-                circle = ((rs.getInt("count")/2));
+                circle = ((rs.getInt("count")));
             }
             return circle;
         }catch(Exception e){
