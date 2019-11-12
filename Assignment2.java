@@ -12,20 +12,16 @@ public class Assignment2 {
     ResultSet rs;
   
     //CONSTRUCTOR
-    Assignment2(){
+    Assignment2() throws ClassNotFoundException{
+        // Try loading the drivers
+        Class.forName(("org.postgresql.Driver"));
     }
   
     //Using the input parameters, establish a connection to be used for this session. Returns true if connection is sucessful
     public boolean connectDB(String URL, String username, String password){
-        // Try loading the drivers
-        try{
-            Class.forName(("org.postgresql.Driver"));
-        }catch (ClassNotFoundException e){
-            return false
-        }
         // Try connecting to the database
         try{
-            connection = DriverManager.getConnection(URL, uername, password);
+            connection = DriverManager.getConnection(URL, username, password);
         }catch (Exception e){
             return false;
         }
@@ -56,7 +52,7 @@ public class Assignment2 {
             ps.setInt(3, globalRank);
             ps.setInt(4, cid);
             // Execute the insert
-            ps.executeUpdate()
+            ps.executeUpdate();
         }catch(Exception e){
             return false;
         }
@@ -66,18 +62,22 @@ public class Assignment2 {
   
     public int getChampions(int pid) {
         // Create the query
-        sql = "SELECT COUNT(pid) FROM champion WHERE pid = ?";
-        ps = connection.prepareStatement(sql);
-        // Insert the pid that user wants
-        ps.setInt(1, pid);
-        // Execute the query
-        rs = ps.executeQuery();
-        // Return the number of championships the player has won
-        while (rs.next()) {
-            return (rs.getInt("count"));
+        int value = 0;
+        try{
+            ps = connection.prepareStatement("SELECT COUNT(pid) FROM champion WHERE pid = ?");
+            // Insert the pid that user wants
+            ps.setInt(1, pid);
+            // Execute the query
+            rs = ps.executeQuery();
+            // Return the number of championships the player has won
+            while (rs.next()) {
+                value = (rs.getInt("count"));
+            }
+            return value;
+        }catch (Exception e){
+            return value;
         }
 
-        return 0;
     }
    
     public String getCourtInfo(int courtid){
@@ -85,11 +85,10 @@ public class Assignment2 {
         String courtinfo = "";
         try{
             // Create the query
-            sql = "SELECT courtid, courtname, capacity, tname " +
+            ps = connection.prepareStatement("SELECT courtid, courtname, capacity, tname " +
                     "FROM court, tournament " +
                     "WHERE court.tid = tournament.tid " +
-                    "AND courtid = ?";
-            ps = connection.prepareStatement(sql);
+                    "AND courtid = ?");
             // Insert the court id
             ps.setInt(1, courtid);
             rs = ps.executeQuery();
@@ -122,7 +121,7 @@ public class Assignment2 {
         }
     }
 
-    public boolean deleteMatchBetween(int p1id, int p2id){
+    public boolean deleteMatcBetween(int p1id, int p2id){
         try{
             // Create the query
             ps = connection.prepareStatement("DELETE FROM event WHERE winid = ? and lossid = ?");
@@ -142,8 +141,7 @@ public class Assignment2 {
             // Var to hold the return
             String result= "";
             // Create the query
-            sql = "SELECT pname, globalrank FROM player ORDER BY globalrank";
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement("SELECT pname, globalrank FROM player ORDER BY globalrank");
             // Execute the query
             rs = ps.executeQuery();
             // Create the return string
@@ -153,37 +151,41 @@ public class Assignment2 {
             // Return the result
             return result;
         }catch (Exception e){
-            return result;
+            return "";
         }
     }
   
     public int findTriCircle(){
         // Create the query
-        sql = "SELECT COUNT(*) FROM " +
-                "(SELECT DISTINCT e1.winid, e1.lossid, e2.winid, e2.lossid " +
-                "FROM event e1, event e2 WHERE e1.lossid = e2.winid and e2.lossid = e1.winid)" +
-                " AS results";
-        ps = connection.prepareStatement(sql);
-        // Execute the query
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            return((rs.getInt("count")/2));
+        int circle = 0;
+        try{
+            ps = connection.prepareStatement("SELECT COUNT(*) FROM " +
+                    "(SELECT DISTINCT e1.winid, e1.lossid, e2.winid, e2.lossid " +
+                    "FROM event e1, event e2 WHERE e1.lossid = e2.winid and e2.lossid = e1.winid)" +
+                    " AS results");
+            // Execute the query
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                circle = ((rs.getInt("count")/2));
+            }
+            return circle;
+        }catch(Exception e){
+            return circle;
         }
+
     }
     
     public boolean updateDB(){
         try{
             // Create the table
-            sql = "CREATE TABLE IF NOT EXISTS championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER)";
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER)");
             // Execute the query
             rs = ps.executeQuery();
 
             // Get the data
-            sql = "SELECT player.pid, pname, COUNT(player.pid) " +
+            ps = connection.prepareStatement("SELECT player.pid, pname, COUNT(player.pid) " +
                     "FROM champion, player WHERE champion.pid = player.pid " +
-                    "GROUP BY player.pid, pname ORDER BY player.pid";
-            ps = connection.prepareStatement(sql);
+                    "GROUP BY player.pid, pname ORDER BY player.pid");
             // Execute the query
             rs = ps.executeQuery();
 
