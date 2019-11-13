@@ -1,8 +1,8 @@
 import java.sql.*;
 
 public class Assignment2 {
-    
-    // A connection to the database  
+
+    // A connection to the database
     Connection connection;
     // Statement to run queries
     Statement sql;
@@ -10,13 +10,13 @@ public class Assignment2 {
     PreparedStatement ps;
     // Resultset for the query
     ResultSet rs;
-  
+
     //CONSTRUCTOR
     Assignment2() throws ClassNotFoundException{
         // Try loading the drivers
         Class.forName(("org.postgresql.Driver"));
     }
-  
+
     //Using the input parameters, establish a connection to be used for this session. Returns true if connection is sucessful
     public boolean connectDB(String URL, String username, String password){
         // Try connecting to the database
@@ -28,7 +28,7 @@ public class Assignment2 {
         // Return true if we created the connection
         return true;
     }
-  
+
     //Closes the connection. Returns true if closure was sucessful
     public boolean disconnectDB(){
         // Try to close the connection
@@ -40,7 +40,7 @@ public class Assignment2 {
         // Return true if successful
         return true;
     }
-    
+
     public boolean insertPlayer(int pid, String pname, int globalRank, int cid) {
         // Try to insert
         try{
@@ -59,7 +59,7 @@ public class Assignment2 {
         // Return true if no errors are thrown
         return true;
     }
-  
+
     public int getChampions(int pid) {
         // Create the query
         int value = 0;
@@ -79,7 +79,7 @@ public class Assignment2 {
         }
 
     }
-   
+
     public String getCourtInfo(int courtid){
         // Var to hold the return
         String courtinfo = "";
@@ -109,7 +109,7 @@ public class Assignment2 {
             // Create the query
             ps = connection.prepareStatement("UPDATE record SET wins = ?, losses = ? WHERE pid = ? and year = ?");
             // Insert all the values that we need
-            ps.setInt(1, wins)
+            ps.setInt(1, wins);
             ps.setInt(2, losses);
             ps.setInt(3, pid);
             ps.setInt(4, year);
@@ -143,7 +143,7 @@ public class Assignment2 {
             return false;
         }
     }
-  
+
     public String listPlayerRanking(){
         try{
             // Var to hold the return
@@ -162,27 +162,24 @@ public class Assignment2 {
             return "";
         }
     }
-  
+
     public int findTriCircle(){
         // Create the query
         int circle = 0;
         try{
-            ps = connection.prepareStatement("SELECT COUNT(*) FROM " +
-                    "(SELECT DISTINCT e1.winid, e2.winid, e3.winid" +
-                    "FROM event e1, event e2, event e3 WHERE e1.lossid = e2.winid and e2.lossid = e3.winid and e3.lossid == e1.winid)" +
-                    " AS results");
+            ps = connection.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT e1.winid, e2.winid, e3.winid FROM event e1, event e2, event e3 WHERE e1.lossid = e2.winid and e2.lossid = e3.winid and e3.lossid = e1.winid) AS results");
             // Execute the query
             rs = ps.executeQuery();
             while (rs.next()) {
                 circle = ((rs.getInt("count")));
             }
-            return circle;
+            return circle/3;
         }catch(Exception e){
             return circle;
         }
 
     }
-    
+
     public boolean updateDB(){
         try{
             // Create the table
@@ -196,7 +193,6 @@ public class Assignment2 {
                     "GROUP BY player.pid, pname ORDER BY player.pid");
             // Execute the query
             rs = ps.executeQuery();
-
             // Run a loop and populate the table
             while (rs.next()){
                 // Create the query
