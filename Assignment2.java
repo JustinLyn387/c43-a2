@@ -55,6 +55,8 @@ public class Assignment2 {
             ps.executeUpdate();
         }catch(Exception e){
             return false;
+        }finally{
+            closeConnections();
         }
         // Return true if no errors are thrown
         return true;
@@ -76,6 +78,8 @@ public class Assignment2 {
             return value;
         }catch (Exception e){
             return value;
+        } finally{
+            closeConnections();
         }
 
     }
@@ -101,6 +105,8 @@ public class Assignment2 {
             return courtinfo;
         }catch (Exception e){
             return courtinfo;
+        } finally{
+            closeConnections();
         }
     }
 
@@ -118,6 +124,8 @@ public class Assignment2 {
             return true;
         }catch (Exception e){
             return false;
+        } finally{
+            closeConnections();
         }
     }
 
@@ -141,6 +149,8 @@ public class Assignment2 {
             return true;
         }catch(Exception e){
             return false;
+        } finally{
+            closeConnections();
         }
     }
 
@@ -160,6 +170,8 @@ public class Assignment2 {
             return result;
         }catch (Exception e){
             return "";
+        } finally{
+            closeConnections();
         }
     }
 
@@ -176,6 +188,8 @@ public class Assignment2 {
             return circle/3;
         }catch(Exception e){
             return circle;
+        }finally{
+            closeConnections();
         }
 
     }
@@ -186,6 +200,8 @@ public class Assignment2 {
             ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER)");
             // Execute the query
             rs = ps.executeQuery();
+            ps.close();
+            rs.close();
 
             // Get the data
             ps = connection.prepareStatement("SELECT player.pid, pname, COUNT(player.pid) " +
@@ -207,7 +223,18 @@ public class Assignment2 {
             return true;
         }catch (Exception e){
             return false;
+        } finally{
+            closeConnections();
         }
+    }
+
+    private void closeConnections() {
+        try {
+            if (rs != null) {
+                rs.close();
+                ps.close();
+            }
+        }catch (Exception e){}
     }
 
 
