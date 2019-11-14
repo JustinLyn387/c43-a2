@@ -177,7 +177,7 @@ public class Assignment2 {
 
     public int findTriCircle(){
         // Create the query
-        int circle = 0;
+        int circle = -1;
         try{
             ps = connection.prepareStatement("SELECT COUNT(*) FROM (SELECT DISTINCT e1.winid, e2.winid, e3.winid FROM event e1, event e2, event e3 WHERE e1.lossid = e2.winid and e2.lossid = e3.winid and e3.lossid = e1.winid) AS results");
             // Execute the query
@@ -196,12 +196,15 @@ public class Assignment2 {
 
     public boolean updateDB(){
         try{
-            // Create the table
-            ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER)");
-            // Execute the query
-            rs = ps.executeQuery();
+            // drop the table if it already exists
+            ps = connection.prepareStatement("DROP TABLE IF EXISTS championPlayers");
+            ps.executeUpdate();
             ps.close();
-            rs.close();
+            // Create the table
+            ps = connection.prepareStatement("CREATE TABLE championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER)");
+            // Execute the query
+            ps.executeUpdate();
+            ps.close();
 
             // Get the data
             ps = connection.prepareStatement("SELECT player.pid, pname, COUNT(player.pid) " +
